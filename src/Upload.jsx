@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import JSZip from 'jszip'
+import FirstSong from './FirstSong'
 
 function Upload() {
   const [data, setData] = useState(null)
@@ -40,6 +41,7 @@ function Upload() {
       <div>Drop your Spotify zip file here</div>
       {loading && <p>Processing...</p>}
       {data && <p>Loaded {data.length} entries from 2016 to 2026</p>}
+      {data && data.length > 0 && <FirstSong entry={data[0]} />}
     </div>
   )
 }
