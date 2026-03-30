@@ -1,0 +1,60 @@
+/* Upload.css */
+.upload {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background: #08070d;
+  overflow: hidden;
+  font-family: 'Jost', sans-serif;
+  color: rgba(255,255,255,0.72);
+}
+
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.upload-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.upload-content h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 4rem;
+  color: #f5c842;
+  text-shadow:
+    0 0 18px rgba(245,200,66,0.55),
+    0 0 50px rgba(245,200,66,0.22),
+    0 0 110px rgba(245,200,66,0.09);
+  margin-bottom: 1rem;
+}
+
+.upload-content div {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+.drop-box {
+  border: 2px solid #f5c842; /* same gold as Musicology */
+  border-radius: 12px;
+  padding: 2rem 3rem;
+  margin: 2rem 0;
+  font-size: 1.2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.drop-box:hover {
+  background: rgba(245,200,66,0.08);
+  box-shadow: 0 0 28px rgba(245,200,66,0.2);
+}
