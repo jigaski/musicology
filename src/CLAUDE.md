@@ -1,0 +1,1 @@
+parse Spotify JSON, make data visualizations, client-side only data processing only, React, consistent visual theme

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import StatsCard from './StatsCard'
 
 function MostSkipped({ entry, skipCount, avgSkipMs, totalPlays }) {
   const [image, setImage] = useState(null)
@@ -26,30 +27,23 @@ function MostSkipped({ entry, skipCount, avgSkipMs, totalPlays }) {
   }, [entry])
 
   return (
-    <div style={{
-      border: '1px solid #333',
-      borderRadius: '12px',
-      padding: '24px',
-      maxWidth: '400px',
-      margin: '16px auto',
-      textAlign: 'center'
-    }}>
-      <p style={{ color: '#888', fontSize: '12px', marginBottom: '16px' }}>
+    <StatsCard>
+      <p className="stats-card-label">
         YOUR MOST SKIPPED
       </p>
       {image && (
         <img src={image} alt={title}
-          style={{ width: '100%', borderRadius: '12px', marginBottom: '16px' }} />
+          className="stats-card-image" />
       )}
-      <h2 style={{ margin: '0 0 4px' }}>{title}</h2>
-      <p style={{ color: '#aaa', margin: '0 0 4px' }}>{artist}</p>
-      <p style={{ color: '#888', fontSize: '13px', marginBottom: '8px' }}>
-        played {totalPlays} times · skipped {skipCount} of them
-      </p>
-      <p style={{ color: '#888', fontSize: '13px' }}>
-        you tend to quit around {avgMinutes}:{avgRemainder.toString().padStart(2, '0')}
-      </p>
-    </div>
+      <h2 className="stats-card-title">{title}</h2>
+      <p className="stats-card-subtitle">{artist}</p>
+      <p className="stats-card-note">{albumName}</p>
+<p className="stats-card-small">
+  played {totalPlays} times · skipped {skipCount} times
+</p>
+<p className="stats-card-small">
+you tend to skip at {avgMinutes}:{avgRemainder.toString().padStart(2, '0')}
+</p>    </StatsCard>
   )
 }
 

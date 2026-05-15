@@ -1,0 +1,130 @@
+.stats-card {
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 24px;
+  padding-bottom: 1.5rem;
+  height: 500px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  text-align: center;
+  background: #0b0a12;
+  color: #fff;
+  box-shadow: 0 0 28px rgba(245, 200, 66, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.stats-card-image {
+  width: 100%;
+  height: 240px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.stats-card-title,
+.stats-card-subtitle,
+.stats-card-note,
+.stats-card-meta,
+.stats-card-small {
+  overflow: visible;
+  text-overflow: ellipsis;
+}
+
+.stats-card-rediscovery {
+  cursor: pointer;
+  animation: goldPulse 2.5s ease-in-out infinite;
+}
+
+.rediscovery-content {
+  opacity: 1;
+  transition: opacity 150ms ease-in-out;
+}
+
+.rediscovery-content.hidden {
+  opacity: 0;
+}
+
+@keyframes goldPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 18px rgba(245, 200, 66, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 36px rgba(245, 200, 66, 0.8);
+  }
+}
+
+.most-played-inner {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.most-played-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0.75rem;
+  box-sizing: border-box;
+}
+
+.most-played-panel-label {
+  color: #666;
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.most-played-image {
+  height: 160px;
+  width: 100%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+
+.stats-card-label {
+  color: #888;
+  font-size: 12px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.stats-card-title {
+  margin: 0 0 4px;
+}
+
+.stats-card-subtitle {
+  color: #aaa;
+  margin: 0 0 4px;
+}
+
+.stats-card-note {
+  color: #888;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.stats-card-meta {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+.stats-card-small {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}

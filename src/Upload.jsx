@@ -3,9 +3,13 @@ import JSZip from 'jszip'
 import Starfield from './Starfield'
 import './Upload.css'
 
-import FirstSong from './FirstSong'
-import MostPlayed from './MostPlayed'
-import MostSkipped from './MostSkipped'
+import FirstSong from './components/cards/FirstSong'
+import MostPlayed from './components/cards/MostPlayed'
+import MoodShift from './components/cards/MoodShift'
+import MostSkipped from './components/cards/MostSkipped'
+import LeastPlayed from './components/cards/LeastPlayed'
+import RageQuits from './components/cards/RageQuits'
+import Rediscoveries from './components/cards/Rediscoveries'
 import { computeStats } from './utils/stats'
 
 export default function Upload() {
@@ -28,6 +32,7 @@ export default function Upload() {
     }
     allEntries.sort((a,b)=>new Date(a.ts)-new Date(b.ts))
     setStats(computeStats(allEntries))
+    console.log('rediscoveries', computeStats(allEntries).rediscoveries)
     setLoading(false)
   }
 
@@ -43,15 +48,30 @@ export default function Upload() {
         </div>
         {loading && <p>Processing...</p>}
         {stats && <p>Loaded entries from {stats.firstSong.ts.slice(0,4)} to 2026</p>}
-        {stats && <FirstSong entry={stats.firstSong} />}
-        {stats && <MostPlayed mostPlays={stats.mostPlayed.mostPlays} 
-                              mostMinutes={stats.mostPlayed.mostMinutes} />}
-        {stats && <MostSkipped
-          entry={stats.mostSkipped.entry}
-          skipCount={stats.mostSkipped.skipCount}
-          avgSkipMs={stats.mostSkipped.avgSkipMs}
-          totalPlays={stats.mostSkipped.totalPlays}
-        />}
+        {stats && (
+          <div className="stats-grid">
+            <FirstSong entry={stats.firstSong} />
+            <MostPlayed
+              className="stats-card-span-2"
+              mostPlays={stats.mostPlayed.mostPlays}
+              mostMinutes={stats.mostPlayed.mostMinutes}
+            />
+
+            <MostSkipped
+              entry={stats.mostSkipped.entry}
+              skipCount={stats.mostSkipped.skipCount}
+              avgSkipMs={stats.mostSkipped.avgSkipMs}
+              totalPlays={stats.mostSkipped.totalPlays}
+            />
+            <LeastPlayed entries={stats.allEntries} />
+            <Rediscoveries rediscoveries={stats.rediscoveries} />
+            <RageQuits entries={stats.allEntries} />
+            <MoodShift
+              className="stats-card-span-2"
+              morningEvening={stats.morningEvening}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
