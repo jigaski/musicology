@@ -179,7 +179,7 @@ function Landing() {
 
           <div className="cta-row">
             <Link to="/upload" className="btn-primary">Upload your data</Link>
-            <a href="#how-it-works" className="btn-ghost">Learn how it works →</a>
+            <Link to="/how-it-works" className="btn-ghost">Learn how it works →</Link>
           </div>
         </div>
       </section>

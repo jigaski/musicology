@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import StatsCard from './StatsCard'
+import { useRandomCycle } from '../../utils/useRandomCycle'
 
 function RageQuits({ entries, className = '' }) {
   const [artwork, setArtwork] = useState(null)
 
-  const rageQuit = (() => {
-    if (!Array.isArray(entries) || entries.length === 0) return null
+  const rageQuits = useMemo(() => {
+    if (!Array.isArray(entries) || entries.length === 0) return []
 
     const playCounts = {}
     const totalMs = {}
@@ -29,26 +30,25 @@ function RageQuits({ entries, className = '' }) {
     })
 
     const candidateKeys = Object.keys(playCounts).filter(key => !invalidTrack[key])
-    if (candidateKeys.length === 0) return null
-
     candidateKeys.sort((a, b) => {
       if (playCounts[b] !== playCounts[a]) return playCounts[b] - playCounts[a]
       return totalMs[a] - totalMs[b]
     })
 
-    const selectedKey = candidateKeys[0]
+    return candidateKeys.map(key => ({
+      entry: trackMap[key],
+      plays: playCounts[key],
+      totalMs: totalMs[key],
+    }))
+  }, [entries])
 
-    return {
-      entry: trackMap[selectedKey],
-      plays: playCounts[selectedKey],
-      totalMs: totalMs[selectedKey],
-    }
-  })()
+  const { current, visible, next } = useRandomCycle(rageQuits)
 
-  const selectedEntry = rageQuit?.entry
+  const selectedEntry = current?.entry
 
   useEffect(() => {
     if (!selectedEntry) return
+    setArtwork(null)
 
     async function fetchArtwork() {
       try {
@@ -69,34 +69,27 @@ function RageQuits({ entries, className = '' }) {
 
   if (!selectedEntry) return null
 
-  const date = new Date(selectedEntry.ts)
-  const formattedDate = date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-  const formattedTime = date.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-
   return (
-    <StatsCard className={className}>
-      <p className="stats-card-label">YOUR RAGE QUIT</p>
-      {artwork && (
-        <img
-          src={artwork}
-          alt={`${selectedEntry.master_metadata_track_name} artwork`}
-          className="stats-card-image"
-        />
-      )}
-      <h2 className="stats-card-title">{selectedEntry.master_metadata_track_name}</h2>
-      <p className="stats-card-subtitle">{selectedEntry.master_metadata_album_artist_name}</p>
-      <p className="stats-card-note">{selectedEntry.master_metadata_album_album_name}</p>
-      <p className="stats-card-meta">{formattedDate} at {formattedTime}</p>
-      <p className="stats-card-small">
-        skipped under 5s every time · {rageQuit.plays} play{rageQuit.plays === 1 ? '' : 's'}
-      </p>
+    <StatsCard
+      className={['stats-card-rediscovery', className].filter(Boolean).join(' ')}
+      onClick={next}
+    >
+      <div className={`rediscovery-content ${visible ? 'visible' : 'hidden'}`}>
+        <p className="stats-card-label">YOUR RAGE QUITS</p>
+        {artwork && (
+          <img
+            src={artwork}
+            alt={`${selectedEntry.master_metadata_track_name} artwork`}
+            className="stats-card-image"
+          />
+        )}
+        <h2 className="stats-card-title">{selectedEntry.master_metadata_track_name}</h2>
+        <p className="stats-card-subtitle">{selectedEntry.master_metadata_album_artist_name}</p>
+        <p className="stats-card-note">{selectedEntry.master_metadata_album_album_name}</p>
+        <p className="stats-card-small">
+          skipped under 5s every time · {current.plays} play{current.plays === 1 ? '' : 's'}
+        </p>
+      </div>
     </StatsCard>
   )
 }

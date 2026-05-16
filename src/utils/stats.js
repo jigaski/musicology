@@ -110,14 +110,10 @@ export function getRediscoveries(entries) {
 }
 
 export function getMorningEvening(entries) {
-  const counts = {
-    morning: {},
-    evening: {}
-  }
-  const trackMap = {
-    morning: {},
-    evening: {}
-  }
+  const morningCounts = {}
+  const eveningCounts = {}
+  const morningMap = {}
+  const eveningMap = {}
 
   entries.forEach(entry => {
     if (!entry.master_metadata_track_name) return
@@ -125,27 +121,27 @@ export function getMorningEvening(entries) {
     const key = `${entry.master_metadata_track_name} - ${entry.master_metadata_album_artist_name}`
 
     if (hour >= 5 && hour <= 11) {
-      counts.morning[key] = (counts.morning[key] || 0) + 1
-      if (!trackMap.morning[key]) trackMap.morning[key] = entry
-    } else if (hour >= 12 && hour <= 18) {
-      counts.evening[key] = (counts.evening[key] || 0) + 1
-      if (!trackMap.evening[key]) trackMap.evening[key] = entry
+      morningCounts[key] = (morningCounts[key] || 0) + 1
+      if (!morningMap[key]) morningMap[key] = entry
+    } else if (hour >= 20 || hour < 2) {
+      eveningCounts[key] = (eveningCounts[key] || 0) + 1
+      if (!eveningMap[key]) eveningMap[key] = entry
     }
   })
 
-  const getTop = bucket => {
-    const entryList = Object.entries(counts[bucket])
-    if (entryList.length === 0) return null
-    const [topKey] = entryList.sort((a, b) => b[1] - a[1])[0]
-    return {
-      entry: trackMap[bucket][topKey],
-      count: counts[bucket][topKey]
-    }
-  }
+  const overlap = new Set(
+    Object.keys(morningCounts).filter(k => eveningCounts[k])
+  )
+
+const toArray = (counts, map) =>
+  Object.keys(counts)
+    .filter(k => !overlap.has(k) && counts[k] >= 5)
+    .sort((a, b) => counts[b] - counts[a])
+    .map(k => ({ entry: map[k], count: counts[k] }))
 
   return {
-    morning: getTop('morning'),
-    evening: getTop('evening')
+    morning: toArray(morningCounts, morningMap),
+    evening: toArray(eveningCounts, eveningMap),
   }
 }
 

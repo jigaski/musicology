@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import JSZip from 'jszip'
 import Starfield from './Starfield'
 import './Upload.css'
@@ -13,13 +14,13 @@ import Rediscoveries from './components/cards/Rediscoveries'
 import { computeStats } from './utils/stats'
 
 export default function Upload() {
+  const navigate = useNavigate()
+  const fileInputRef = useRef(null)
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  async function handleDrop(e) {
-    e.preventDefault()
+  async function processFile(file) {
     setLoading(true)
-    const file = e.dataTransfer.files[0]
     const zip = await JSZip.loadAsync(file)
     const audioFiles = Object.values(zip.files).filter(f =>
       f.name.includes('Streaming_History_Audio') && f.name.endsWith('.json')
@@ -30,10 +31,20 @@ export default function Upload() {
       const parsed = JSON.parse(text)
       allEntries.push(...parsed)
     }
-    allEntries.sort((a,b)=>new Date(a.ts)-new Date(b.ts))
+    allEntries.sort((a, b) => new Date(a.ts) - new Date(b.ts))
     setStats(computeStats(allEntries))
-    console.log('rediscoveries', computeStats(allEntries).rediscoveries)
     setLoading(false)
+  }
+
+  async function handleDrop(e) {
+    e.preventDefault()
+    const file = e.dataTransfer.files[0]
+    processFile(file)
+  }
+
+  function handleFileInput(e) {
+    const file = e.target.files[0]
+    if (file) processFile(file)
   }
 
   function handleDragOver(e) { e.preventDefault() }
@@ -42,8 +53,15 @@ export default function Upload() {
     <div className="upload">
       <Starfield />
 <div className="upload-content" onDrop={handleDrop} onDragOver={handleDragOver}>
-  <h1>Musicology</h1>
-        <div className="drop-box">
+  <h1 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>Musicology</h1>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".zip"
+          style={{ display: 'none' }}
+          onChange={handleFileInput}
+        />
+        <div className="drop-box" onClick={() => fileInputRef.current.click()}>
           Drop your Spotify zip file here
         </div>
         {loading && <p>Processing...</p>}
@@ -56,20 +74,20 @@ export default function Upload() {
               mostPlays={stats.mostPlayed.mostPlays}
               mostMinutes={stats.mostPlayed.mostMinutes}
             />
-
+            <Rediscoveries rediscoveries={stats.rediscoveries} />
             <MostSkipped
               entry={stats.mostSkipped.entry}
               skipCount={stats.mostSkipped.skipCount}
+              
               avgSkipMs={stats.mostSkipped.avgSkipMs}
               totalPlays={stats.mostSkipped.totalPlays}
             />
             <LeastPlayed entries={stats.allEntries} />
-            <Rediscoveries rediscoveries={stats.rediscoveries} />
-            <RageQuits entries={stats.allEntries} />
-            <MoodShift
+                        <MoodShift
               className="stats-card-span-2"
               morningEvening={stats.morningEvening}
             />
+            <RageQuits entries={stats.allEntries} />
           </div>
         )}
       </div>
